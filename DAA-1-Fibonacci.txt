@@ -1,0 +1,64 @@
+import java.util.Scanner;
+
+public class Fibonacci {
+
+    // Recursive Fibonacci
+    public static int fibonacciRecursive(int n) {
+        if (n <= 1) return n;
+        return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+    }
+
+    // Non-Recursive Fibonacci
+    public static void fibonacciNonRecursive(int n) {
+        int a = 0, b = 1, c;
+        System.out.print("Non-Recursive Fibonacci: ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(a + " ");
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of Fibonacci numbers to print: ");
+        int n = scanner.nextInt();
+
+        // Measuring time and space for Non-Recursive Approach
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc(); // Run garbage collector to clear memory
+
+        long startMemoryIterative = runtime.totalMemory() - runtime.freeMemory();
+        long startTimeIterative = System.nanoTime();
+
+        fibonacciNonRecursive(n);
+
+        long endTimeIterative = System.nanoTime();
+        long endMemoryIterative = runtime.totalMemory() - runtime.freeMemory();
+
+        System.out.println("Non-Recursive Time (ms): " + (endTimeIterative - startTimeIterative) / 1_000_000 + " ms");
+        System.out.println("Non-Recursive Memory Used (bytes): " + (endMemoryIterative - startMemoryIterative) + " bytes");
+
+        // Measuring time and space for Recursive Approach
+        runtime.gc(); // Run garbage collector again
+
+        long startMemoryRecursive = runtime.totalMemory() - runtime.freeMemory();
+        long startTimeRecursive = System.nanoTime();
+
+        System.out.print("Recursive Fibonacci: ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(fibonacciRecursive(i) + " ");
+        }
+        System.out.println();
+
+        long endTimeRecursive = System.nanoTime();
+        long endMemoryRecursive = runtime.totalMemory() - runtime.freeMemory();
+
+        System.out.println("Recursive Time (ms): " + (endTimeRecursive - startTimeRecursive) / 1_000_000 + " ms");
+        System.out.println("Recursive Memory Used (bytes): " + (endMemoryRecursive - startMemoryRecursive) + " bytes");
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,92 @@
+import java.util.Scanner;
+
+public class NQueens {
+
+    // Function to print the chessboard
+    public static void printBoard(int[][] board, int n) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 1)
+                    System.out.print("Q ");
+                else
+                    System.out.print(". ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    // Function to check if a queen can be placed at board[row][col]
+    public static boolean isSafe(int[][] board, int row, int col, int n) {
+        // Check the column for the same row
+        for (int i = 0; i < row; i++) {
+            if (board[i][col] == 1)
+                return false;
+        }
+
+        // Check upper-left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        // Check upper-right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        return true;
+    }
+
+    // Backtracking function to solve N-Queens problem
+    public static boolean solveNQueens(int[][] board, int row, int n) {
+        // If all queens are placed
+        if (row == n) {
+            printBoard(board, n);
+            return true;
+        }
+
+        boolean res = false;
+
+        // Try placing the queen in all columns one by one
+        for (int col = 0; col < n; col++) {
+            // Check if it's safe to place the queen at [row][col]
+            if (isSafe(board, row, col, n)) {
+                // Place the queen
+                board[row][col] = 1;
+
+                // Recur to place the rest of the queens
+                res = solveNQueens(board, row + 1, n) || res;
+
+                // If placing queen in [row][col] doesn't lead to a solution, remove the queen
+                board[row][col] = 0;
+            }
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Take input for the size of the chessboard (n)
+        System.out.println("Enter the size of the chessboard (n): ");
+        int n = sc.nextInt();
+
+        // Create an empty board initialized with 0 (no queens placed)
+        int[][] board = new int[n][n];
+
+        // Place the first queen manually in the first row and column
+        board[0][0] = 1; // You can change this to place the first queen in any column
+        System.out.println("Placing first queen at position (0, 0): ");
+        printBoard(board, n);
+
+        // Start the backtracking process to place the remaining queens
+        if (!solveNQueens(board, 1, n)) {
+            System.out.println("No solution exists.");
+        }
+
+        sc.close();
+    }
+}

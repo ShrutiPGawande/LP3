@@ -1,0 +1,72 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+
+
+data = pd.read_csv("emails.csv") 
+data
+
+
+# 1. Data Preprocessing - Handle missing values if necessary
+data.drop(['Email No.'],axis=1, inplace=True)
+# 2. Feature Selection/Engineering - Select relevant features
+
+
+# 3. Split the data into training and testing sets
+X = data.drop("Prediction", axis=1)  # Features
+y = data["Prediction"]  # Target variable
+print("Features: ",X)
+print("Target: ",y)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+
+# 4. Model Building
+# K-Nearest Neighbors
+knn_model = KNeighborsClassifier(n_neighbors=5)
+knn_model.fit(X_train, y_train)
+
+
+# Support Vector Machine
+svm_model = SVC()
+svm_model.fit(X_train, y_train)
+SVC()
+
+
+
+# 5. Model Evaluation
+# K-Nearest Neighbors
+knn_predictions = knn_model.predict(X_test)
+knn_accuracy = accuracy_score(y_test, knn_predictions)
+knn_report = classification_report(y_test, knn_predictions)
+
+
+print(knn_predictions)
+
+
+# Print or visualize the evaluation results
+print("K-Nearest Neighbors Accuracy:")
+print(knn_accuracy)
+print("K-Nearest Neighbors Classification Report:")
+print(knn_report)
+
+
+
+# Support Vector Machine
+svm_predictions = svm_model.predict(X_test)
+svm_accuracy = accuracy_score(y_test, svm_predictions)
+svm_report = classification_report(y_test, svm_predictions)
+
+
+print(svm_predictions)
+
+
+print("Support Vector Machine Accuracy:")
+print(svm_accuracy)
+print("Support Vector Machine Classification Report:")
+print(svm_report)
+
+

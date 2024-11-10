@@ -1,0 +1,81 @@
+import java.util.Scanner;
+
+class Item {
+    int value;
+    int weight;
+    double ratio;
+
+    public Item(int value, int weight) {
+        this.value = value;
+        this.weight = weight;
+        this.ratio = (double) value / weight;  // Value-to-weight ratio
+    }
+}
+
+public class FractionalKnapsack {
+
+    // Function to solve the fractional knapsack problem
+    public static double knapSack(Item[] items, int n, int capacity) {
+        // Sort items based on the value-to-weight ratio in descending order
+        java.util.Arrays.sort(items, (item1, item2) -> Double.compare(item2.ratio, item1.ratio));
+
+        double totalValue = 0.0; // Final total value in the knapsack
+        int remainingCapacity = capacity;
+
+        // Traverse through all items and select them greedily
+        for (int i = 0; i < n; i++) {
+            if (items[i].weight <= remainingCapacity) {
+                // If the item can be completely taken
+                remainingCapacity -= items[i].weight;
+                totalValue += items[i].value;
+            } else {
+                // If we can take a fraction of the item
+                totalValue += items[i].value * ((double) remainingCapacity / items[i].weight);
+                break;
+            }
+        }
+
+        return totalValue;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Take input for number of items and capacity of the knapsack
+        System.out.println("Enter the number of items: ");
+        int n = sc.nextInt();
+
+        System.out.println("Enter the capacity of the knapsack: ");
+        int capacity = sc.nextInt();
+
+        Item[] items = new Item[n];
+
+        // Take input for value and weight of each item
+        for (int i = 0; i < n; i++) {
+            System.out.println("Enter value and weight for item " + (i + 1) + ": ");
+            int value = sc.nextInt();
+            int weight = sc.nextInt();
+            items[i] = new Item(value, weight);
+        }
+
+        // Call the knapsack function and display the maximum value
+        double maxValue = knapSack(items, n, capacity);
+        System.out.println("The maximum value we can obtain is: " + maxValue);
+
+        sc.close();
+    }
+}
+
+/*Enter the number of items: 
+4
+Enter the capacity of the knapsack: 
+50
+Enter value and weight for item 1: 
+60 10
+Enter value and weight for item 2: 
+100 20
+Enter value and weight for item 3: 
+120 30
+Enter value and weight for item 4: 
+90 40
+*/

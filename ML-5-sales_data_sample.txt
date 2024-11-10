@@ -1,0 +1,83 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+
+# Load the dataset
+df = pd.read_csv('sales_data_sample.csv', encoding='ISO-8859-1')
+print(df.head())
+
+
+
+# Preprocessing the data: Drop any unnecessary columns (if needed)
+# Assuming we focus on numerical columns for clustering
+df_numeric = df.select_dtypes(include=[np.number])
+
+# Handling missing values (if any)
+df_numeric.fillna(df_numeric.mean(), inplace=True)
+
+# Standardize the data
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(df_numeric)
+
+# Determine the optimal number of clusters using the Elbow Method
+inertia = []  # To store the sum of squared distances (inertia)
+K = range(1, 11)  # Checking for 1 to 10 clusters, can adjust range if needed
+
+for k in K:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(df_scaled)  # Fit KMeans on the scaled data
+    inertia.append(kmeans.inertia_)  # Append the inertia for each k
+
+
+
+
+# Print the inertia values for each number of clusters
+print("Number of clusters (k) vs Inertia:")
+for i, val in enumerate(inertia, 1):
+    print(f"k={i}, Inertia={val}")
+
+
+
+# Calculate and print percentage change between successive inertia values
+print("\nPercentage change in inertia between successive cluster counts:")
+percentage_changes = []  # To store percentage changes
+
+for i in range(1, len(inertia)):
+    change = ((inertia[i-1] - inertia[i]) / inertia[i-1]) * 100
+    percentage_changes.append(change)
+    print(f"k={i+1} vs k={i}: {change:.2f}% change")
+
+
+
+# Determine the elbow point where the percentage change starts leveling off
+# You can determine the "elbow" as the cluster with the biggest percentage drop
+optimal_k = 1 + np.argmax(np.diff(percentage_changes)) + 1
+print(f"\nThe optimal number of clusters based on the Elbow Method is: {optimal_k}")
+
+
+# Plot the Elbow Method graph (visualization)
+plt.figure(figsize=(8, 5))
+plt.plot(K, inertia, 'bx-')  # Plot number of clusters vs. inertia
+plt.xlabel('Number of clusters (k)')
+plt.ylabel('Inertia')
+plt.title('Elbow Method to Determine Optimal k')
+plt.show()
+
+
+
+# Fit the K-Means model with the optimal number of clusters (e.g., k=3 or k=4 based on the graph)
+optimal_k = 4  # This value should be chosen based on the elbow plot
+kmeans = KMeans(n_clusters=optimal_k, random_state=42)
+df['Cluster'] = kmeans.fit_predict(df_scaled)
+
+
+# Preview the clustered data
+print(df.head())
+
+
+# To show cluster centroids (optional)
+print("Cluster Centers:", kmeans.cluster_centers_)
